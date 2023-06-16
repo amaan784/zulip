@@ -5,6 +5,7 @@ from io import BytesIO, StringIO
 from urllib.parse import urlparse
 
 from django.conf import settings
+from django.http.response import StreamingHttpResponse
 from PIL import Image
 
 import zerver.lib.upload
@@ -149,7 +150,8 @@ class LocalStorageTest(UploadSerializeMixin, ZulipTestCase):
         # We get a resized avatar from it
         image_data = read_test_image_file("img.png")
         resized_avatar = resize_avatar(image_data)
-        self.assertEqual(resized_avatar, result.getvalue())
+        assert isinstance(result, StreamingHttpResponse)
+        self.assertEqual(resized_avatar, b"".join(result.streaming_content))
 
         with self.settings(DEVELOPMENT=False):
             # In production, this is an X-Accel-Redirect to the

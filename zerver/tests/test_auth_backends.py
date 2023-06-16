@@ -6307,8 +6307,8 @@ class TestLDAP(ZulipLDAPTestCase):
                 "rb",
             ) as f:
                 example_avatar = f.read()
-            self.assertEqual(
-                response.getvalue(), resize_avatar(example_avatar, DEFAULT_AVATAR_SIZE)
+            self.assert_streaming_content(
+                response, resize_avatar(example_avatar, DEFAULT_AVATAR_SIZE)
             )
 
     @override_settings(AUTHENTICATION_BACKENDS=("zproject.backends.ZulipLDAPAuthBackend",))
